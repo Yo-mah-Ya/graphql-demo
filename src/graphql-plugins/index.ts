@@ -11,7 +11,13 @@ export const graphQLCustomPlugin: ApolloServerPlugin = {
                 errors.forEach((error) => {
                     Logger.warn({
                         message: error.message,
-                        error,
+                        error: {
+                            locations: error.locations
+                                ?.map((l) => JSON.stringify(l))
+                                .join(", "),
+                            path: error.path,
+                            extensionsCode: error.extensions?.code,
+                        },
                         callSite: {
                             function: "didEncounterErrors",
                         },

@@ -8,18 +8,11 @@ export const resolvers: Resolvers = {
             const peopleIndex = after
                 ? people.findIndex((p) => p.id === after)
                 : -1;
-            const pickData = (p: (typeof people)[number]) =>
-                ({
-                    id: p.id,
-                    name: p.name,
-                    films: p.films,
-                } as const);
+
             const resultPeople =
                 peopleIndex === -1
-                    ? people.slice(0, first).map(pickData)
-                    : people
-                          .slice(peopleIndex + 1, peopleIndex + 1 + first)
-                          .map(pickData);
+                    ? people.slice(0, first)
+                    : people.slice(peopleIndex + 1, peopleIndex + 1 + first);
             return {
                 pageInfo: {
                     hasNextPage: first <= resultPeople.length,

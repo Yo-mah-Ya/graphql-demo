@@ -1,4 +1,5 @@
 import { ApolloServer } from "@apollo/server";
+import { ApolloServerErrorCode } from "@apollo/server/errors";
 import type { GraphQLFormattedError } from "graphql";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import depthLimit from "graphql-depth-limit";
@@ -10,7 +11,7 @@ const initializeApolloServer = (): ApolloServer =>
     new ApolloServer({
         typeDefs,
         resolvers,
-        introspection: true,
+        introspection: process.env.NODE_ENV !== "production",
         formatError: ({
             message,
             locations,
@@ -20,7 +21,9 @@ const initializeApolloServer = (): ApolloServer =>
             Logger.warn({
                 message,
                 formattedError: {
-                    locations,
+                    locations: locations
+                        ?.map((l) => JSON.stringify(l))
+                        .join(", "),
                     path,
                     extensionsCode: extensions?.code,
                 },
@@ -28,9 +31,22 @@ const initializeApolloServer = (): ApolloServer =>
                     function: "formatError in ApolloServer",
                 },
             });
-            return {
-                message: "INTERNAL_SERVER_ERROR",
-            };
+            return typeof extensions?.code === "string" &&
+                [
+                    ApolloServerErrorCode.GRAPHQL_PARSE_FAILED,
+                    ApolloServerErrorCode.GRAPHQL_VALIDATION_FAILED,
+                    ApolloServerErrorCode.PERSISTED_QUERY_NOT_FOUND,
+                    ApolloServerErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+                    ApolloServerErrorCode.BAD_USER_INPUT,
+                    ApolloServerErrorCode.OPERATION_RESOLUTION_FAILURE,
+                    ApolloServerErrorCode.BAD_REQUEST,
+                ].includes(extensions.code as ApolloServerErrorCode)
+                ? {
+                      message: ApolloServerErrorCode.BAD_REQUEST,
+                  }
+                : {
+                      message: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+                  };
         },
         validationRules: [depthLimit(10)],
         plugins: [graphQLCustomPlugin],
