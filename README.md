@@ -10,15 +10,24 @@ From where I sit, GraphQL is a specification for enhancing `schema driven`, `dat
 
 1. schema driven
 
-    `schema driven` developing enables us to maintain and enhance features more easily than when systems are complicated. It's like OpenAPI schema for REST API.
+    `schema driven` developing enables us to maintain and enhance features more easily when systems are complicated. It's like OpenAPI schema for REST API.
 
 2. data driven
 
     `data driven` developing tells and forces us what the frontend really needs. Clients can get data only what they actually need. In Rest API, they might've gotten extra data what they really don't need.
 
-And there're more unique features, both pros and cons.
+![graphql](docs/graphql.drawio.svg)
 
-[See official document shown below.](https://graphql.org/learn/)
+-   Basic features
+
+| name          | description                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------- |
+| schemas       | data schema                                                                                    |
+| queries       | Client fetches data through queries                                                            |
+| mutations     | Client update data through mutations                                                           |
+| subscriptions | They can maintain an active connection to your GraphQL server, most commonly using `WebSocket` |
+
+[More info. See official document](https://graphql.org/learn/)
 
 # Why to use? Learn the history
 
@@ -54,6 +63,8 @@ And there're more unique features, both pros and cons.
 
         -   Increase the risk of Single Point of Failure
         -   The bigger system will be, the more BFF will be complicated and difficult to maintain, difficult to expand the feature
+
+**[more info in terms of microservice](https://microservices.io/patterns/apigateway.html)**
 
 -   Compares GraphQL to REST API
 
